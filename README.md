@@ -23,15 +23,15 @@ The script includes validation and sanitization for generated MQTT topic names t
 The script requires an input CSV file specified by the `HARDCODED_CSV_FILE` variable. This CSV file **must** contain at least the following columns:
 
 * `NodeId`: The full OPC UA Node ID in the format `ns=<namespace_index>;s=<identifier_string>` (e.g., `ns=2;s=MyDevice.TankLevel`). The script currently assumes the identifier type is a string (`s=`).
-* `CustomName`: A descriptive name to be used for the node within the Telegraf configuration.
+* `CustomName`: Will be used as the measurement name in InfluxDB and will be used as the topic for mqtt, for example: `Device1/Pressure`.
 
 Example `input_nodes.csv`:
 
 | NodeId              | BrowseName       | CustomName              | DataType | DisplayName          | Description                      |
 |---------------------|------------------|-------------------------|----------|----------------------|----------------------------------|
-| ns=2;s=Device1.Temp | Device1.Temp     | Sensor_Device1_Temp     | Float    | Temperature Sensor 1 | Reads temperature from Device 1  |
-| ns=2;s=Device1.Pressure | Device1.Pressure | Sensor_Device1_Pressure | Double   | Pressure Sensor 1    | Reads pressure from Device 1     |
-| ns=2;s=Device2.Status | Device2.Status   | State_Device2_Status    | String   | Status Device 2      | Operating status of Device 2     |
+| ns=2;s=Device1.Temp | Device1/Temp     | Sensor_Device1_Temp     | Float    | Temperature Sensor 1 | Reads temperature from Device 1  |
+| ns=2;s=Device1.Pressure | Device1/Pressure | Sensor_Device1_Pressure | Double   | Pressure Sensor 1    | Reads pressure from Device 1     |
+| ns=2;s=Device2.Status | Device2/Status   | State_Device2_Status    | String   | Status Device 2      | Operating status of Device 2     |
 
 *(Note: `BrowseName`, `DataType`, `DisplayName`, `Description` columns are shown for context but are not used by this generator script)*
 ## Configuration
