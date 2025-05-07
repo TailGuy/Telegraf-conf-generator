@@ -238,7 +238,7 @@ class TelegrafConfigGenerator:
         for node in nodes:
             config.append(f"""# MQTT Output for Node: {node['identifier']}
 [[outputs.mqtt]]
-  servers = ["{self.mqtt_broker}"] # Replace with your MQTT broker address
+  servers = ["{self.mqtt_broker}"]
   topic = "{node['mqtt_topic']}"
   tagpass = {{ id = ["ns={node['namespace']};s={node['identifier']}"] }}
   qos = 0
