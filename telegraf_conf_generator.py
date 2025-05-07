@@ -120,9 +120,10 @@ class TelegrafConfigGenerator:
                         
                         namespace = node_id_parts[0].replace('ns=', '')
                         identifier = node_id_parts[1].replace('s=', '')
+                        custom_name = row['CustomName']
                         
-                        # Generate MQTT topic name from the identifier and validate/sanitize it
-                        mqtt_topic = f"telegraf/opcua/{identifier}"
+                        # Generate MQTT topic name using the CustomName and validate/sanitize it
+                        mqtt_topic = f"telegraf/opcua/{custom_name}"
                         if not self.validate_mqtt_topic(mqtt_topic):
                             original_topic = mqtt_topic
                             mqtt_topic = self.sanitize_mqtt_topic(mqtt_topic)
@@ -132,7 +133,7 @@ class TelegrafConfigGenerator:
                         
                         nodes.append({
                             'node_id': row['NodeId'],
-                            'custom_name': row['CustomName'],
+                            'custom_name': custom_name,
                             'namespace': namespace,
                             'identifier': identifier,
                             'identifier_type': 's',  # Assuming all are string type as per example
