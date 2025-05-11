@@ -120,9 +120,10 @@ class TelegrafConfigGenerator:
                         
                         namespace = node_id_parts[0].replace('ns=', '')
                         identifier = node_id_parts[1].replace('s=', '')
+                        custom_name = row['CustomName']
                         
-                        # Generate MQTT topic name from the identifier and validate/sanitize it
-                        mqtt_topic = f"telegraf/opcua/{identifier}"
+                        # Generate MQTT topic name using the CustomName and validate/sanitize it
+                        mqtt_topic = f"telegraf/opcua/{custom_name}"
                         if not self.validate_mqtt_topic(mqtt_topic):
                             original_topic = mqtt_topic
                             mqtt_topic = self.sanitize_mqtt_topic(mqtt_topic)
@@ -132,7 +133,7 @@ class TelegrafConfigGenerator:
                         
                         nodes.append({
                             'node_id': row['NodeId'],
-                            'custom_name': row['CustomName'],
+                            'custom_name': custom_name,
                             'namespace': namespace,
                             'identifier': identifier,
                             'identifier_type': 's',  # Assuming all are string type as per example
@@ -216,7 +217,7 @@ class TelegrafConfigGenerator:
 """)
         
         # Add InfluxDB output plugin
-        config.append(f"""
+        config.append(f"""              
 ###############################################################################
 #                            OUTPUT PLUGINS                                   #
 ###############################################################################
@@ -235,15 +236,16 @@ class TelegrafConfigGenerator:
 """)
         
         for node in nodes:
-            config.append(f"""# MQTT Output for Node: {node['identifier']}
+            config.append(f'''# MQTT Output for Node: {node['identifier']}
 [[outputs.mqtt]]
-  servers = ["{self.mqtt_broker}"] # Replace with your MQTT broker address
+  servers = ["{self.mqtt_broker}"]
   topic = "{node['mqtt_topic']}"
   tagpass = {{ id = ["ns={node['namespace']};s={node['identifier']}"] }}
   qos = 0
   retain = false
-  data_format = "json"
-""")
+  data_format = "template"
+  template = "{{{{ .Field \\"{node['custom_name']}\\" }}}}"
+''')
         
         # Write configuration to file
         try:
@@ -283,7 +285,7 @@ def main():
     """
     # --- HARDCODED VALUES ---
     # !! IMPORTANT: Modify these values before running !!
-    HARDCODED_CSV_FILE = "nodes_output_new.csv"     # Input CSV file with OPC UA nodes
+    HARDCODED_CSV_FILE = "nodes_output_new_new.csv"     # Input CSV file with OPC UA nodes
     HARDCODED_OUTPUT_FILE = "telegraf.conf"         # Output Telegraf configuration file
     HARDCODED_MQTT_BROKER = "tcp://mosquitto:1883"  # MQTT broker URL
     HARDCODED_OPCUA_ENDPOINT = "opc.tcp://100.94.111.58:4841"  # OPC UA server endpoint
