@@ -1,4 +1,4 @@
-# Telegraf Configuration Generator for OPC UA
+# Telegraf Configuration Generator for OPC UA to MQTT
 
 ## Description
 
